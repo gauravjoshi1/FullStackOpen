@@ -1,18 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import Person from './components/Person'
 import PersonForm from './components/PersonForm'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
-  const [newPhone, setNewPhone] = useState('')
+  const [number, setNumber] = useState('')
   const [checkName, setCheckName] = useState('')
   const [showAll, setShowAll] = useState(true)
   
   // filter people if filter textbox is not empty
   const filterPeople = showAll ? persons : persons.filter(person => person.name.toLowerCase().includes(checkName.toLowerCase()))
   
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then((response) => {
+        setPersons(response.data)
+      })
+  }, [])
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -27,11 +36,11 @@ const App = () => {
       
       <PersonForm 
         newName={newName} 
-        newPhone={newPhone} 
+        number={number}
         persons={persons}
         setPersons={setPersons}
         setNewName={setNewName}
-        setNewPhone={setNewPhone}
+        setNumber={setNumber}
       />
       
       <h3>Numbers</h3>

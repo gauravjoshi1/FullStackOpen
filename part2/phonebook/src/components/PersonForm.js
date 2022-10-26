@@ -5,19 +5,19 @@ const PersonForm = (props) => {
         
         const personObject = {
           name: props.newName,
-          phone: props.newPhone
+          number: props.number
         }
     
         if (props.persons.some(person => person.name === props.newName)) {
           alert(`${props.newName} is already added to the phonebook`)
           props.setNewName('')
-          props.setNewPhone('')
+          props.setNumber('')
           return;
         }
     
         props.setPersons(props.persons.concat(personObject))
         props.setNewName('')
-        props.setNewPhone('')
+        props.setNumber('')
     }
 
     const handleNewName = (event) => {
@@ -27,7 +27,7 @@ const PersonForm = (props) => {
     
     const handleNewPhone = (event) => {
         console.log(event.target.value)
-        props.setNewPhone(event.target.value)
+        props.setNumber(event.target.value)
     }
 
 
@@ -44,7 +44,7 @@ const PersonForm = (props) => {
                 <input 
                     type = "tel" 
                     pattern="[0-9\-]+"
-                    value={props.newPhone}
+                    value={props.number}
                     onChange={handleNewPhone}/>
             </div>
             <div>
