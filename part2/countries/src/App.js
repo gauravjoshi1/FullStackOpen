@@ -1,33 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-const RenderOneCountry = ({country}) => {
-  return (
-    <div>
-      <h2>{country.name}</h2>
-      <p>capital {country.capital}</p>
-      <p>area {country.area}</p>
-      <h3>languages:</h3>
-      <ul>
-        {country.languages.map(languages => 
-          <li key={languages.name}>{languages.name}</li>
-        )}
-      </ul>
-
-      <img src={country.flag} width="100" height="100" alt="Flag of the country"/>
-    </div>
-  )
-}
-
-const RenderCountries = ({countries}) => {
-  console.log(countries)
-
-  return (
-    <>
-    {countries.length === 1 ? <RenderOneCountry country={countries[0]}/> : countries.map(country => <p key={country.name}>{country.name}</p>)}
-    </>
-  )
-}
+import RenderCountryList from "./components/RenderCountryList";
 
 const App = () => {
   const [countryInfo, setCountryInfo] = useState([])
@@ -55,7 +28,6 @@ const App = () => {
       .then((response) => {
         setCountryInfo(response.data)
       })
-      
   }, [])
   
   return (
@@ -70,10 +42,8 @@ const App = () => {
       </div>
 
       <div>
-        {error ? <p>Filter more too many countries to list</p> : <RenderCountries countries={outputCountryList}/>}
+        {error ? <p>Too many matches, specify another filter</p> : <RenderCountryList countries={outputCountryList} setCountry={setOutputCountryList}/>}
       </div>
-      
-
     </div>
   )
 }
