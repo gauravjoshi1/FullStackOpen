@@ -1,42 +1,69 @@
-const PersonForm = (props) => {
+
+import personService from "../services/persons"
+
+const PersonForm = ({newName, number, persons, setPersons, setNewName, setNumber}) => {
 
     const submitHandler = (event) => {
         event.preventDefault()
         
         const personObject = {
-          name: props.newName,
-          number: props.number
+          name: newName,
+          number: number
         }
-    
-        if (props.persons.some(person => person.name === props.newName)) {
-          alert(`${props.newName} is already added to the phonebook`)
-          props.setNewName('')
-          props.setNumber('')
-          return;
+            
+        const personIdLocator = (newName) => {
+            const personFromList = persons.find(person => person.name === newName)
+            return personFromList.id
         }
-    
-        props.setPersons(props.persons.concat(personObject))
-        props.setNewName('')
-        props.setNumber('')
+        
+        const changedPersonNumber = (newName, newNumber) => {
+            const personFromList = persons.find(person => person.name === newName)
+            const changedPersonInfo = {...personFromList, number: newNumber}
+            return changedPersonInfo
+        }
+
+        const confirmUpdate = (newName) => {
+            return window.confirm(`${newName} is already in the phonebook, replace the new number with a new one?`)
+        }
+
+        if (persons.some(person => person.name === newName) && confirmUpdate(newName)) {
+            personService
+            .updatePersonNumber(personIdLocator(newName), changedPersonNumber(newName, number))
+            .then(returnedObject => {
+                setPersons(persons.map(
+                    updatedPerson => updatedPerson.name === newName ? returnedObject : updatedPerson)
+                )
+            })
+
+            return;
+        } 
+         
+        personService
+        .addNewPerson(personObject)
+        .then(newPersonObject => {
+            console.log(newPersonObject)
+            setPersons(persons.concat(newPersonObject))
+            setNewName('')
+            setNumber('')
+        })
     }
 
     const handleNewName = (event) => {
         console.log(event.target.value)
-        props.setNewName(event.target.value)
+        setNewName(event.target.value)
     }
     
     const handleNewPhone = (event) => {
         console.log(event.target.value)
-        props.setNumber(event.target.value)
+        setNumber(event.target.value)
     }
-
 
     return (
         <form onSubmit={submitHandler}>
             <div>
                 name: 
                 <input 
-                    value={props.newName}
+                    value={newName}
                     onChange={handleNewName}/>
             </div>
             <div>
@@ -44,7 +71,7 @@ const PersonForm = (props) => {
                 <input 
                     type = "tel" 
                     pattern="[0-9\-]+"
-                    value={props.number}
+                    value={number}
                     onChange={handleNewPhone}/>
             </div>
             <div>
