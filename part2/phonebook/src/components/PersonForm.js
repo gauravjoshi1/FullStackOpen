@@ -1,7 +1,7 @@
 
 import personService from "../services/persons"
 
-const PersonForm = ({newName, number, persons, setPersons, setNewName, setNumber}) => {
+const PersonForm = ({newName, number, persons, setPersons, setNewName, setNumber, setMessage}) => {
 
     const submitHandler = (event) => {
         event.preventDefault()
@@ -35,17 +35,44 @@ const PersonForm = ({newName, number, persons, setPersons, setNewName, setNumber
                 )
             })
 
-            return;
-        } 
-         
-        personService
-        .addNewPerson(personObject)
-        .then(newPersonObject => {
-            console.log(newPersonObject)
-            setPersons(persons.concat(newPersonObject))
             setNewName('')
             setNumber('')
-        })
+
+            const updatedNotification = {
+                color: `green`,
+                content: `Updated ${personObject.name}'s number successfully`
+            }
+
+            setMessage(updatedNotification)
+        
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+
+            return;
+        } 
+        
+        else {
+            personService
+            .addNewPerson(personObject)
+            .then(newPersonObject => {
+                console.log(newPersonObject)
+                setPersons(persons.concat(newPersonObject))
+                setNewName('')
+                setNumber('')
+                
+                const notification = {
+                    color: `green`,
+                    content: `Added ${personObject.name} successfully`
+                }
+
+                setMessage(notification)
+
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            })
+        }
     }
 
     const handleNewName = (event) => {

@@ -1,12 +1,23 @@
 import personService from "../services/persons"
 
-const RemovePerson =({person, setPersons, persons}) => {
+const RemovePerson =({person, setPersons, persons, setMessage}) => {
     const removePersonHandler = () => {
-        if (window.confirm(`Delete ${person.name}?`) == true) {
+        if (window.confirm(`Delete ${person.name}?`) === true) {
             personService
             .removePerson(person.id)
             .then(() => {
                 setPersons(persons.filter(currentPerson => currentPerson.id !== person.id))
+            }).catch(() => {
+                const deleteNotification = {
+                    color: `red`,
+                    content: `Information regarding ${person.name} has already been removed from the server`
+                }
+
+                setMessage(deleteNotification)
+
+                setTimeout(() => {
+                    setMessage(null)
+                }, 8000)
             })
         }
     }
@@ -19,7 +30,7 @@ const RemovePerson =({person, setPersons, persons}) => {
     )
 }
 
-const Person = ({filterPeople, setPersons, persons}) => {
+const Person = ({filterPeople, setPersons, persons, setMessage}) => {
     return (
         <ul>
             {filterPeople.map(person =>
@@ -28,6 +39,7 @@ const Person = ({filterPeople, setPersons, persons}) => {
                     person={person}
                     setPersons={setPersons}
                     persons={persons}
+                    setMessage={setMessage}
                 />
             </p>)}
         </ul>
